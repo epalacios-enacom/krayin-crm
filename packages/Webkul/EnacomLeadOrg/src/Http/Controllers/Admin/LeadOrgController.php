@@ -18,7 +18,7 @@ class LeadOrgController
 
         return view('enacomleadorg::admin.leads.index', [
             'organizations' => $organizations,
-            'selectedOrganizationId' => $request->input('organization_id'),
+            'selectedOrganizationIds' => (array) $request->input('organization_ids', []),
         ]);
     }
 
@@ -39,9 +39,15 @@ class LeadOrgController
             $query->whereIn('leads.id', $ids);
         }
 
-        $orgId = $request->input('organization_id');
-        if ($orgId) {
-            $query->where('leads.organization_id', $orgId);
+        $orgIds = (array) $request->input('organization_ids', []);
+        $orgIds = array_values(array_filter($orgIds));
+        if (count($orgIds)) {
+            $query->whereIn('leads.organization_id', $orgIds);
+        } else {
+            $orgId = $request->input('organization_id');
+            if ($orgId) {
+                $query->where('leads.organization_id', $orgId);
+            }
         }
 
         $org = $request->input('organization_name');
