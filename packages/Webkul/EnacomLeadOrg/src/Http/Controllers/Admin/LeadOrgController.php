@@ -16,6 +16,39 @@ class LeadOrgController
             ->orderBy('name')
             ->get();
 
+        if ($request->input('view_type') === 'board') {
+            $orgIds = (array) $request->input('organization_ids', []);
+            $orgIds = array_values(array_filter($orgIds));
+
+            $query = DB::table('leads')
+                ->leftJoin('organizations', 'leads.organization_id', '=', 'organizations.id')
+                ->leftJoin('lead_stages', 'leads.lead_stage_id', '=', 'lead_stages.id')
+                ->select(
+                    'leads.id',
+                    'leads.title',
+                    'leads.lead_stage_id',
+                    DB::raw('COALESCE(organizations.name, "") as organization_name'),
+                    DB::raw('COALESCE(lead_stages.name, "Sin etapa") as stage_name')
+                );
+
+            if (count($orgIds)) {
+                $query->whereIn('leads.organization_id', $orgIds);
+            }
+
+            $leads = $query->orderBy('lead_stages.id')->get();
+
+            $columns = [];
+            foreach ($leads as $lead) {
+                $columns[$lead->stage_name][] = $lead;
+            }
+
+            return view('enacomleadorg::admin.leads.board', [
+                'organizations' => $organizations,
+                'selectedOrganizationIds' => $orgIds,
+                'columns' => $columns,
+            ]);
+        }
+
         return view('enacomleadorg::admin.leads.index', [
             'organizations' => $organizations,
             'selectedOrganizationIds' => (array) $request->input('organization_ids', []),
