@@ -1,6 +1,6 @@
 <div class="content">
     <table-component
-        src="{{ route('admin.leads.enacom.grid') }}"
+        src="{{ route('admin.leads.grid') }}"
         :columns="[
             { name: 'id', label: 'ID' },
             { name: 'title', label: 'Título' },
@@ -9,6 +9,5 @@
         ]"
     ></table-component>
 
-    <a href="{{ route('admin.leads.enacom.export') }}" class="btn btn-primary">Exportar CSV</a>
+    <a href="{{ route('admin.leads.export') }}" class="btn btn-primary">Exportar CSV</a>
 </div>
-
