@@ -24,6 +24,11 @@ class LeadOrgController
         $grid = new LeadOrgDataGrid;
         $grid->prepareQueryBuilder();
         $query = $grid->getQueryBuilder();
+
+        $ids = $request->input('ids');
+        if (is_array($ids) && count($ids)) {
+            $query->whereIn('leads.id', $ids);
+        }
         $rows = $query->get();
         $headers = [
             'Content-Type' => 'text/csv',
@@ -45,4 +50,3 @@ class LeadOrgController
         return Response::stream($callback, 200, $headers);
     }
 }
-
