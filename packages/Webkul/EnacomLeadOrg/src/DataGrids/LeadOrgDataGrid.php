@@ -19,6 +19,11 @@ class LeadOrgDataGrid extends DataGrid
                 DB::raw('COALESCE(organizations.name, "") as organization_name')
             );
 
+        $orgId = request('organization_id');
+        if ($orgId) {
+            $query->where('leads.organization_id', $orgId);
+        }
+
         $org = request('organization_name');
         if ($org) {
             $query->where('organizations.name', 'like', '%'.$org.'%');

@@ -3,14 +3,23 @@
 namespace Webkul\EnacomLeadOrg\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Webkul\EnacomLeadOrg\DataGrids\LeadOrgDataGrid;
 
 class LeadOrgController
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('enacomleadorg::admin.leads.index');
+        $organizations = DB::table('organizations')
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return view('enacomleadorg::admin.leads.index', [
+            'organizations' => $organizations,
+            'selectedOrganizationId' => $request->input('organization_id'),
+        ]);
     }
 
     public function grid(Request $request)
@@ -28,6 +37,11 @@ class LeadOrgController
         $ids = $request->input('ids');
         if (is_array($ids) && count($ids)) {
             $query->whereIn('leads.id', $ids);
+        }
+
+        $orgId = $request->input('organization_id');
+        if ($orgId) {
+            $query->where('leads.organization_id', $orgId);
         }
 
         $org = $request->input('organization_name');

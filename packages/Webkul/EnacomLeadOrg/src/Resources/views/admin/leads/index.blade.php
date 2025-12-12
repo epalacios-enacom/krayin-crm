@@ -1,14 +1,19 @@
 <div class="content">
     <div class="page-action">
         <form method="GET" action="{{ route('admin.leads.index') }}" style="display:inline-block;margin-right:10px;">
-            <input type="text" name="organization_name" value="{{ request('organization_name') }}" placeholder="Filtrar por Organización" />
+            <select name="organization_id">
+                <option value="">Todas las organizaciones</option>
+                @foreach($organizations as $org)
+                    <option value="{{ $org->id }}" {{ (string)$selectedOrganizationId === (string)$org->id ? 'selected' : '' }}>{{ $org->name }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="btn btn-primary">Filtrar</button>
             <a href="{{ route('admin.leads.index') }}" class="btn">Limpiar</a>
         </form>
-        <a href="{{ route('admin.leads.export', ['organization_name' => request('organization_name')]) }}" class="btn btn-primary">Exportar CSV</a>
+        <a href="{{ route('admin.leads.export', ['organization_id' => request('organization_id')]) }}" class="btn btn-primary">Exportar CSV</a>
     </div>
     <table-component
-        src="{{ route('admin.leads.grid', ['organization_name' => request('organization_name')]) }}"
+        src="{{ route('admin.leads.grid', ['organization_id' => request('organization_id')]) }}"
         :columns="[
             { name: 'id', label: 'ID' },
             { name: 'title', label: 'Título' },
