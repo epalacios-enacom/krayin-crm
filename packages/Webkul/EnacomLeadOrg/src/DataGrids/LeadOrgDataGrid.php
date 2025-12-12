@@ -19,6 +19,11 @@ class LeadOrgDataGrid extends DataGrid
                 DB::raw('COALESCE(organizations.name, "") as organization_name')
             );
 
+        $org = request('organization_name');
+        if ($org) {
+            $query->where('organizations.name', 'like', '%'.$org.'%');
+        }
+
         $this->addFilter('organization_name', 'organizations.name');
         $this->setQueryBuilder($query);
     }
@@ -62,4 +67,3 @@ class LeadOrgDataGrid extends DataGrid
         ]);
     }
 }
-

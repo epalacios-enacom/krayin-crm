@@ -29,6 +29,11 @@ class LeadOrgController
         if (is_array($ids) && count($ids)) {
             $query->whereIn('leads.id', $ids);
         }
+
+        $org = $request->input('organization_name');
+        if ($org) {
+            $query->where('organizations.name', 'like', '%'.$org.'%');
+        }
         $rows = $query->get();
         $headers = [
             'Content-Type' => 'text/csv',
