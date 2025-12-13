@@ -6,7 +6,7 @@ KRAYIN_ROOT_CONTAINER="/var/www/html" # Ruta DENTRO del contenedor
 CONTAINER=${1:-krayin-app} # Nombre del contenedor
 HOST_PACKAGES_DIR="./packages/Webkul/EnacomLeadOrg" # Ruta local del paquete en el host (relativa a donde se corre el script)
 
-echo "=== DESPLIEGUE ENACOM (V2 - Docker Native) ==="
+echo "=== DESPLIEGUE ENACOM (V2.1 - Docker Native) ==="
 
 # 1. Copiar archivos al contenedor
 echo "1. Copiando archivos al contenedor..."
