@@ -41,6 +41,7 @@ class LeadOrgDataGrid extends DataGrid
         $this->addFilter('sales_person', 'users.name');
         $this->addFilter('contact_person', 'persons.name');
         $this->addFilter('organization_name', 'organizations.name');
+        $this->addFilter('title', 'leads.title');
 
         $this->setQueryBuilder($queryBuilder);
         return $queryBuilder;
@@ -65,6 +66,7 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.sales-person'),
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
         ]);
 
         $this->addColumn([
@@ -72,6 +74,8 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.subject'),
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
+            'filterable' => true,
         ]);
         
         $this->addColumn([
@@ -89,6 +93,7 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.source'),
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
         ]);
 
         $this->addColumn([
@@ -103,6 +108,7 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.type'),
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
         ]);
 
         $this->addColumn([
@@ -110,6 +116,7 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.contact_person'),
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
         ]);
 
         $this->addColumn([
