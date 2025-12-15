@@ -3,7 +3,7 @@
 namespace Webkul\EnacomLeadOrg\DataGrids;
 
 use Illuminate\Support\Facades\DB;
-use Webkul\Ui\DataGrid\DataGrid;
+use Webkul\DataGrid\DataGrid;
 
 class LeadOrgDataGrid extends DataGrid
 {
