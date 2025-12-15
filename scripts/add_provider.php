@@ -28,9 +28,30 @@ if (preg_match($corruptionPattern, $content)) {
     $content = file_get_contents($configFile);
 }
 
-// Check if it already exists
+// If provider already exists, move it to the top of providers for priority
 if (strpos($content, $providerClass) !== false) {
-    echo "  -> The provider is already registered. No action needed.\n";
+    echo "  -> Provider already registered. Reordering to top for priority...\n";
+    // Remove existing occurrence
+    $content = str_replace($providerClass . ",", "", $content);
+
+    // Insert right after providers array start (traditional) or at beginning of merge()
+    $mergePattern = '/(ServiceProvider::defaultProviders\(\)->merge\(\s*\[)/';
+    if (preg_match($mergePattern, $content)) {
+        $newContent = preg_replace($mergePattern, "$1\n            $providerClass,", $content, 1);
+        file_put_contents($configFile, $newContent);
+        echo "  -> Provider moved to top inside merge() successfully.\n";
+        exit(0);
+    }
+
+    $arrayPattern = '/([\'\"]providers[\'\"]\s*=>\s*\[)/';
+    if (preg_match($arrayPattern, $content)) {
+        $newContent = preg_replace($arrayPattern, "$1\n            $providerClass,", $content, 1);
+        file_put_contents($configFile, $newContent);
+        echo "  -> Provider moved to top inside providers array successfully.\n";
+        exit(0);
+    }
+
+    echo "  [WARN] Could not determine providers style for reordering.\n";
     exit(0);
 }
 
