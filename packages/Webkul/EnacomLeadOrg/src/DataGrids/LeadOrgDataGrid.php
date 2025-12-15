@@ -79,6 +79,9 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => 'Empresa',
             'type'       => 'string',
             'sortable'   => true,
+            'searchable' => true,
+            'filterable' => true,
+            'visibility' => true,
         ]);
 
         $this->addColumn([
