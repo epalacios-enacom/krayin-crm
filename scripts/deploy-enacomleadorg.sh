@@ -72,7 +72,8 @@ if (strpos(\$content, \$provider) !== false) {
              // Asumimos que despues viene un [
              \$content = preg_replace(\$simplePattern, \"\$1 [\\n        \$provider,\", \$content, 1);
              // NOTA: Esto es arriesgado si ya había un [ , pero es un fallback.
-             // Mejor imprimimos un segmento más largo para debug si falla todo.
+             file_put_contents(\$file, \$content);
+             echo '  - Provider insertado exitosamente (fallback).' . PHP_EOL;
         } else {
             echo '  - Fallo total al buscar providers.' . PHP_EOL;
         }
