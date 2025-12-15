@@ -45,11 +45,11 @@ class LeadOrgDataGrid extends DataGrid
     }
 
     /**
-     * Add columns.
+     * Prepare columns.
      *
      * @return void
      */
-    public function addColumns()
+    public function prepareColumns()
     {
         $this->addColumn([
             'index'      => 'id',
