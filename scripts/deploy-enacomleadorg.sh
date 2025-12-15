@@ -45,20 +45,31 @@ if (!file_exists(\$file)) {
 \$content = file_get_contents(\$file);
 \$provider = 'Webkul\\\\EnacomLeadOrg\\\\Providers\\\\EnacomLeadOrgServiceProvider::class';
 
-// 3.1. INTENTO DE REPARACIÓN (Si el script anterior rompió el archivo)
-// Buscamos si existe el provider seguido de un corchete abierto extra o array(
-// El error común del fallback anterior era generar: 'providers' => [ Provider, [
-// Buscamos: Provider::class, [
-\$brokenPattern = '/' . preg_quote(\$provider, '/') . ',\s*\[/';
-if (preg_match(\$brokenPattern, \$content)) {
-    echo '  - DETECTADO ERROR DE SINTAXIS (doble corchete). Reparando...' . PHP_EOL;
-    \$content = preg_replace(\$brokenPattern, \"\$provider,\", \$content);
+// --- DIAGNÓSTICO ---
+// Mostrar los alrededores de 'providers' para entender el estado actual
+echo '  [DEBUG] Estado actual de config/app.php (sección providers):' . PHP_EOL;
+if (preg_match('/([\"\047]providers[\"\047]\s*=>[\s\S]{0,300})/', \$content, \$m)) {
+    echo '  --------------------------------------------------' . PHP_EOL;
+    echo substr(\$m[1], 0, 300) . '...' . PHP_EOL;
+    echo '  --------------------------------------------------' . PHP_EOL;
+} else {
+    echo '  [DEBUG] No se encontró la cadena providers.' . PHP_EOL;
+}
+
+// --- REPARACIÓN DE CORRUPCIÓN CONOCIDA (Doble Corchete) ---
+// Busca: 'providers' => [ ... EnacomLeadOrgServiceProvider::class, [
+// El error [ extra proviene de un fallo en el script anterior.
+\$repairPattern = '/([\"\047]providers[\"\047]\s*=>\s*\[\s*)(.*' . preg_quote(\$provider, '/') . ',\s*)\[/s';
+if (preg_match(\$repairPattern, \$content)) {
+    echo '  - DETECTADO ERROR CRÍTICO (Doble Corchete). Reparando...' . PHP_EOL;
+    \$content = preg_replace(\$repairPattern, \"\$1\$2\", \$content, 1);
     file_put_contents(\$file, \$content);
-    echo '  - Reparación aplicada.' . PHP_EOL;
-    // Re-leer contenido
+    echo '  - Archivo reparado y guardado.' . PHP_EOL;
+    // Recargar contenido
     \$content = file_get_contents(\$file);
 }
 
+// --- VERIFICACIÓN E INSERCIÓN ---
 if (strpos(\$content, \$provider) !== false) {
     echo '  - El provider ya existe en config/app.php' . PHP_EOL;
 } else {
