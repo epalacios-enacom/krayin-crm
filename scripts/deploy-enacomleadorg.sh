@@ -45,13 +45,26 @@ if (!file_exists(\$file)) {
 \$content = file_get_contents(\$file);
 \$provider = 'Webkul\\\\EnacomLeadOrg\\\\Providers\\\\EnacomLeadOrgServiceProvider::class';
 
+// 3.1. INTENTO DE REPARACIÓN (Si el script anterior rompió el archivo)
+// Buscamos si existe el provider seguido de un corchete abierto extra o array(
+// El error común del fallback anterior era generar: 'providers' => [ Provider, [
+// Buscamos: Provider::class, [
+\$brokenPattern = '/' . preg_quote(\$provider, '/') . ',\s*\[/';
+if (preg_match(\$brokenPattern, \$content)) {
+    echo '  - DETECTADO ERROR DE SINTAXIS (doble corchete). Reparando...' . PHP_EOL;
+    \$content = preg_replace(\$brokenPattern, \"\$provider,\", \$content);
+    file_put_contents(\$file, \$content);
+    echo '  - Reparación aplicada.' . PHP_EOL;
+    // Re-leer contenido
+    \$content = file_get_contents(\$file);
+}
+
 if (strpos(\$content, \$provider) !== false) {
     echo '  - El provider ya existe en config/app.php' . PHP_EOL;
 } else {
-    // Intentar buscar 'providers' => [ (soportando retorno de carro y espacios)
-    // El error indica que no matchea el patrón simple. Vamos a hacerlo más flexible
-    // Buscamos la palabra 'providers' seguida de => y [
-    \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*\[)/m';
+    // 3.2. INSERCIÓN SEGURA
+    // Buscamos 'providers' => [  O  'providers' => array(
+    \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*(?:\[|array\s*\())/m';
     
     if (preg_match(\$pattern, \$content)) {
         \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
@@ -59,24 +72,20 @@ if (strpos(\$content, \$provider) !== false) {
         echo '  - Provider insertado exitosamente.' . PHP_EOL;
     } else {
         echo '  - ERROR: No se pudo encontrar el array providers en config/app.php' . PHP_EOL;
-        echo '  - Intentando estrategia alternativa (buscar providers = ServiceProvider::defaultProviders()...)' . PHP_EOL;
+        echo '  - NO se aplicaron cambios para evitar romper el archivo.' . PHP_EOL;
+        echo '  - Contenido detectado alrededor de "providers":' . PHP_EOL;
         
-        // Estrategia alternativa para Laravel 11 o configs diferentes
-        // Buscamos simplemente el inicio del return [ si es que providers está muy abajo, 
-        // pero lo más seguro es que la regex anterior falló por espacios o saltos de línea extraños.
-        
-        // Vamos a intentar buscar una cadena más simple 'providers' =>
-        \$simplePattern = '/(\047providers\047\s*=>)/';
-        if (preg_match(\$simplePattern, \$content)) {
-             echo '  - Encontrado providers sin corchete inmediato. Insertando forzosamente...' . PHP_EOL;
-             // Asumimos que despues viene un [
-             \$content = preg_replace(\$simplePattern, \"\$1 [\\n        \$provider,\", \$content, 1);
-             // NOTA: Esto es arriesgado si ya había un [ , pero es un fallback.
-             file_put_contents(\$file, \$content);
-             echo '  - Provider insertado exitosamente (fallback).' . PHP_EOL;
+        // Mostrar contexto para debug
+        if (preg_match('/[\"\047]providers[\"\047]/', \$content, \$matches, PREG_OFFSET_CAPTURE)) {
+            \$start = max(0, \$matches[0][1] - 50);
+            echo substr(\$content, \$start, 200) . PHP_EOL;
         } else {
-            echo '  - Fallo total al buscar providers.' . PHP_EOL;
+            echo '    (Palabra "providers" no encontrada)' . PHP_EOL;
         }
+        
+        echo '  - POR FAVOR AGREGA EL PROVIDER MANUALMENTE EN config/app.php:' . PHP_EOL;
+        echo \"    \$provider\" . PHP_EOL;
+        exit(1);
     }
 }
 "
