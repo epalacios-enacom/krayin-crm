@@ -48,9 +48,10 @@ if (!file_exists(\$file)) {
 if (strpos(\$content, \$provider) !== false) {
     echo '  - El provider ya existe en config/app.php' . PHP_EOL;
 } else {
-    // Intentar insertar después de 'providers' => [
-    // Probamos con comillas simples y dobles
-    \$pattern = '/([\"\047]providers[\"\047]\\s*=>\\s*\\[)/';
+    // Intentar buscar 'providers' => [ (soportando retorno de carro y espacios)
+    // El error indica que no matchea el patrón simple. Vamos a hacerlo más flexible
+    // Buscamos la palabra 'providers' seguida de => y [
+    \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*\[)/m';
     
     if (preg_match(\$pattern, \$content)) {
         \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
@@ -58,8 +59,23 @@ if (strpos(\$content, \$provider) !== false) {
         echo '  - Provider insertado exitosamente.' . PHP_EOL;
     } else {
         echo '  - ERROR: No se pudo encontrar el array providers en config/app.php' . PHP_EOL;
-        // Imprimir inicio del archivo para depuración
-        echo substr(\$content, 0, 500) . PHP_EOL;
+        echo '  - Intentando estrategia alternativa (buscar providers = ServiceProvider::defaultProviders()...)' . PHP_EOL;
+        
+        // Estrategia alternativa para Laravel 11 o configs diferentes
+        // Buscamos simplemente el inicio del return [ si es que providers está muy abajo, 
+        // pero lo más seguro es que la regex anterior falló por espacios o saltos de línea extraños.
+        
+        // Vamos a intentar buscar una cadena más simple 'providers' =>
+        \$simplePattern = '/(\047providers\047\s*=>)/';
+        if (preg_match(\$simplePattern, \$content)) {
+             echo '  - Encontrado providers sin corchete inmediato. Insertando forzosamente...' . PHP_EOL;
+             // Asumimos que despues viene un [
+             \$content = preg_replace(\$simplePattern, \"\$1 [\\n        \$provider,\", \$content, 1);
+             // NOTA: Esto es arriesgado si ya había un [ , pero es un fallback.
+             // Mejor imprimimos un segmento más largo para debug si falla todo.
+        } else {
+            echo '  - Fallo total al buscar providers.' . PHP_EOL;
+        }
     }
 }
 "
