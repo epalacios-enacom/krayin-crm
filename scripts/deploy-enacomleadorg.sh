@@ -69,15 +69,37 @@ if (preg_match(\$repairPattern, \$content)) {
     \$content = file_get_contents(\$file);
 }
 
+// --- REPARACIÓN 2: CORRUPCIÓN "ARRAY WRAP" (Conflict con Laravel 11 style) ---
+// Detecta: 'providers' => [ Provider, ServiceProvider::defaultProviders()->merge
+// Esto ocurre cuando el script intenta meter el provider en un array pero era una llamada a método.
+\$wrapPattern = '/([\"\047]providers[\"\047]\s*=>\s*\[\s*' . preg_quote(\$provider, '/') . ',\s*)(ServiceProvider::defaultProviders)/';
+if (preg_match(\$wrapPattern, \$content)) {
+    echo '  - DETECTADO ERROR (Array Wrap). Reparando...' . PHP_EOL;
+    // Restauramos a: 'providers' => ServiceProvider::defaultProviders
+    \$content = preg_replace(\$wrapPattern, "'providers' => \$2", \$content);
+    file_put_contents(\$file, \$content);
+    echo '  - Archivo restaurado (Array Wrap).' . PHP_EOL;
+    \$content = file_get_contents(\$file);
+}
+
 // --- VERIFICACIÓN E INSERCIÓN ---
 if (strpos(\$content, \$provider) !== false) {
     echo '  - El provider ya existe en config/app.php' . PHP_EOL;
 } else {
-    // 3.2. INSERCIÓN SEGURA
+    // ESTRATEGIA 1: Laravel 11 / Krayin moderno (merge)
+    // Busca: ServiceProvider::defaultProviders()->merge([
+    \$mergePattern = '/(ServiceProvider::defaultProviders\(\)->merge\(\s*\[)/';
+    if (preg_match(\$mergePattern, \$content)) {
+         echo '  - Detectado estilo Laravel moderno (merge).' . PHP_EOL;
+         \$content = preg_replace(\$mergePattern, "\$1\\n        \$provider,", \$content, 1);
+         file_put_contents(\$file, \$content);
+         echo '  - Provider insertado en merge([...]) exitosamente.' . PHP_EOL;
+    } 
+    // ESTRATEGIA 2: Array estándar
     // Buscamos 'providers' => [  O  'providers' => array(
-    \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*(?:\[|array\s*\())/m';
-    
-    if (preg_match(\$pattern, \$content)) {
+    else {
+        \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*(?:\[|array\s*\())/m';
+        if (preg_match(\$pattern, \$content)) {
         \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
         file_put_contents(\$file, \$content);
         echo '  - Provider insertado exitosamente.' . PHP_EOL;
