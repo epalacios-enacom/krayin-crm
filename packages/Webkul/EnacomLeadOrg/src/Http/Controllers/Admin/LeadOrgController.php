@@ -21,7 +21,8 @@ class LeadOrgController
             $orgIds = array_values(array_filter($orgIds));
 
             $query = DB::table('leads')
-                ->leftJoin('organizations', 'leads.organization_id', '=', 'organizations.id')
+                ->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
+                ->leftJoin('organizations', 'persons.organization_id', '=', 'organizations.id')
                 ->leftJoin('lead_stages', 'leads.lead_stage_id', '=', 'lead_stages.id')
                 ->select(
                     'leads.id',
@@ -32,7 +33,7 @@ class LeadOrgController
                 );
 
             if (count($orgIds)) {
-                $query->whereIn('leads.organization_id', $orgIds);
+                $query->whereIn('persons.organization_id', $orgIds);
             }
 
             $leads = $query->orderBy('lead_stages.id')->get();
@@ -75,11 +76,11 @@ class LeadOrgController
         $orgIds = (array) $request->input('organization_ids', []);
         $orgIds = array_values(array_filter($orgIds));
         if (count($orgIds)) {
-            $query->whereIn('leads.organization_id', $orgIds);
+            $query->whereIn('persons.organization_id', $orgIds);
         } else {
             $orgId = $request->input('organization_id');
             if ($orgId) {
-                $query->where('leads.organization_id', $orgId);
+                $query->where('persons.organization_id', $orgId);
             }
         }
 

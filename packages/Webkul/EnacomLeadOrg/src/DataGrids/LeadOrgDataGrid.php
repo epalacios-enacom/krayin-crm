@@ -32,7 +32,7 @@ class LeadOrgDataGrid extends DataGrid
             )
             ->leftJoin('users', 'leads.user_id', '=', 'users.id')
             ->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
-            ->leftJoin('organizations', 'leads.organization_id', '=', 'organizations.id')
+            ->leftJoin('organizations', 'persons.organization_id', '=', 'organizations.id')
             ->leftJoin('lead_sources', 'leads.lead_source_id', '=', 'lead_sources.id')
             ->leftJoin('lead_types', 'leads.lead_type_id', '=', 'lead_types.id')
             ->leftJoin('lead_pipeline_stages', 'leads.lead_pipeline_stage_id', '=', 'lead_pipeline_stages.id');
