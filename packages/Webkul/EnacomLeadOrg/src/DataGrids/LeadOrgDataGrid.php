@@ -3,6 +3,7 @@
 namespace Webkul\EnacomLeadOrg\DataGrids;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Query\Builder;
 use Webkul\DataGrid\DataGrid;
 
 class LeadOrgDataGrid extends DataGrid
@@ -12,7 +13,7 @@ class LeadOrgDataGrid extends DataGrid
      *
      * @return void
      */
-    public function prepareQueryBuilder()
+    public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('leads')
             ->addSelect(
@@ -42,6 +43,7 @@ class LeadOrgDataGrid extends DataGrid
         $this->addFilter('organization_name', 'organizations.name');
 
         $this->setQueryBuilder($queryBuilder);
+        return $queryBuilder;
     }
 
     /**
