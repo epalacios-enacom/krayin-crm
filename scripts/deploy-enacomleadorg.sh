@@ -38,16 +38,30 @@ file_put_contents(\$file, json_encode(\$json, JSON_PRETTY_PRINT|JSON_UNESCAPED_S
 echo "3. Configurando Provider (Prioridad Alta)..."
 docker exec "$CONTAINER" php -r "
 \$file = '$KRAYIN_ROOT_CONTAINER/config/app.php';
+if (!file_exists(\$file)) {
+    echo 'ERROR: No se encuentra config/app.php en ' . \$file . PHP_EOL;
+    exit(1);
+}
 \$content = file_get_contents(\$file);
 \$provider = 'Webkul\\\\EnacomLeadOrg\\\\Providers\\\\EnacomLeadOrgServiceProvider::class';
 
-// 1. Limpiar referencia existente para evitar duplicados
-\$content = preg_replace('/\\s*'.preg_quote(\$provider, '/').',/', '', \$content);
-
-// 2. Insertar al PRINCIPIO del array 'providers'
-\$content = preg_replace('/(\047providers\047\\s*=>\\s*\\[)/', \"\$1\\n        \$provider,\", \$content, 1);
-
-file_put_contents(\$file, \$content);
+if (strpos(\$content, \$provider) !== false) {
+    echo '  - El provider ya existe en config/app.php' . PHP_EOL;
+} else {
+    // Intentar insertar después de 'providers' => [
+    // Probamos con comillas simples y dobles
+    \$pattern = '/([\"\047]providers[\"\047]\\s*=>\\s*\\[)/';
+    
+    if (preg_match(\$pattern, \$content)) {
+        \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
+        file_put_contents(\$file, \$content);
+        echo '  - Provider insertado exitosamente.' . PHP_EOL;
+    } else {
+        echo '  - ERROR: No se pudo encontrar el array providers en config/app.php' . PHP_EOL;
+        // Imprimir inicio del archivo para depuración
+        echo substr(\$content, 0, 500) . PHP_EOL;
+    }
+}
 "
 
 # 4. Regenerar Autoload y Cache
@@ -56,6 +70,10 @@ docker exec "$CONTAINER" bash -c "cd $KRAYIN_ROOT_CONTAINER && composer dump-aut
 
 # 5. Verificación
 echo "=== VERIFICACION ==="
+echo "Verificando si el provider está registrado:"
+docker exec "$CONTAINER" grep "EnacomLeadOrgServiceProvider" "$KRAYIN_ROOT_CONTAINER/config/app.php" || echo "  ERROR: El provider NO aparece en config/app.php"
+
+echo ""
 echo "Ruta de prueba (debe decir ENACOM PACKAGE IS ACTIVE):"
 echo "  http://crm-enacom.onak.cl/admin/enacom-test"
 echo ""
