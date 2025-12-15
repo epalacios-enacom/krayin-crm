@@ -100,25 +100,26 @@ if (strpos(\$content, \$provider) !== false) {
     else {
         \$pattern = '/([\"\047]providers[\"\047]\s*=>\s*(?:\[|array\s*\())/m';
         if (preg_match(\$pattern, \$content)) {
-        \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
-        file_put_contents(\$file, \$content);
-        echo '  - Provider insertado exitosamente.' . PHP_EOL;
-    } else {
-        echo '  - ERROR: No se pudo encontrar el array providers en config/app.php' . PHP_EOL;
-        echo '  - NO se aplicaron cambios para evitar romper el archivo.' . PHP_EOL;
-        echo '  - Contenido detectado alrededor de "providers":' . PHP_EOL;
-        
-        // Mostrar contexto para debug
-        if (preg_match('/[\"\047]providers[\"\047]/', \$content, \$matches, PREG_OFFSET_CAPTURE)) {
-            \$start = max(0, \$matches[0][1] - 50);
-            echo substr(\$content, \$start, 200) . PHP_EOL;
+            \$content = preg_replace(\$pattern, \"\$1\\n        \$provider,\", \$content, 1);
+            file_put_contents(\$file, \$content);
+            echo '  - Provider insertado exitosamente.' . PHP_EOL;
         } else {
-            echo '    (Palabra "providers" no encontrada)' . PHP_EOL;
+            echo '  - ERROR: No se pudo encontrar el array providers en config/app.php' . PHP_EOL;
+            echo '  - NO se aplicaron cambios para evitar romper el archivo.' . PHP_EOL;
+            echo '  - Contenido detectado alrededor de "providers":' . PHP_EOL;
+            
+            // Mostrar contexto para debug
+            if (preg_match('/[\"\047]providers[\"\047]/', \$content, \$matches, PREG_OFFSET_CAPTURE)) {
+                \$start = max(0, \$matches[0][1] - 50);
+                echo substr(\$content, \$start, 200) . PHP_EOL;
+            } else {
+                echo '    (Palabra "providers" no encontrada)' . PHP_EOL;
+            }
+            
+            echo '  - POR FAVOR AGREGA EL PROVIDER MANUALMENTE EN config/app.php:' . PHP_EOL;
+            echo \"    \$provider\" . PHP_EOL;
+            exit(1);
         }
-        
-        echo '  - POR FAVOR AGREGA EL PROVIDER MANUALMENTE EN config/app.php:' . PHP_EOL;
-        echo \"    \$provider\" . PHP_EOL;
-        exit(1);
     }
 }
 "
