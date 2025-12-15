@@ -160,9 +160,9 @@ class LeadOrgDataGrid extends DataGrid
     {
         $this->addMassAction([
             'type'   => 'delete',
-            'label'  => trans('ui::app.datagrid.actions.delete'),
-            'action' => route('admin.leads.mass_delete'),
-            'method' => 'PUT',
+            'title'  => trans('ui::app.datagrid.actions.delete'),
+            'url'    => route('admin.leads.mass_delete'),
+            'method' => 'POST',
         ]);
     }
 }
