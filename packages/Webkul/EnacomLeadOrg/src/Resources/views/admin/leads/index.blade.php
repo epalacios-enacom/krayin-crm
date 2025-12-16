@@ -25,8 +25,8 @@
 
         @php 
             $qs = http_build_query(['organization_ids' => request('organization_ids')]); 
-            // Usamos admin.leads.get porque hemos hackeado el controlador Core para que sirva nuestro Grid
-            $srcUrl = route('admin.leads.get');
+            // Apuntamos a nuestra ruta personalizada que sirve el LeadOrgDataGrid con la columna Empresa
+            $srcUrl = route('admin.leads.enacom_grid');
             if ($qs) {
                 $srcUrl .= (strpos($srcUrl, '?') === false ? '?' : '&') . $qs;
             }
