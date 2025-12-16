@@ -17,29 +17,15 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
 
             $routes = \Illuminate\Support\Facades\Route::getRoutes();
 
-            // Debug logging
-            $logPath = base_path('loglead.txt');
-            $msg = "Booted EnacomLeadOrg at " . date('Y-m-d H:i:s') . "\n";
-
             $index = $routes->getByName('admin.leads.index');
             if ($index) {
-                $msg .= "Found admin.leads.index. Old: " . $index->getActionName() . "\n";
                 $index->uses(LeadOrgController::class . '@index');
-                $msg .= "Updated admin.leads.index. New: " . $index->getActionName() . "\n";
-            } else {
-                $msg .= "admin.leads.index NOT FOUND\n";
             }
 
             $get = $routes->getByName('admin.leads.get');
             if ($get) {
-                $msg .= "Found admin.leads.get. Old: " . $get->getActionName() . "\n";
                 $get->uses(LeadOrgController::class . '@grid');
-                $msg .= "Updated admin.leads.get. New: " . $get->getActionName() . "\n";
-            } else {
-                $msg .= "admin.leads.get NOT FOUND\n";
             }
-
-            file_put_contents($logPath, $msg, FILE_APPEND);
         });
     }
 
