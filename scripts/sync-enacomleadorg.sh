@@ -29,6 +29,12 @@ rm -rf "$SRC_DIR/packages/$PKG_NAME"
 mkdir -p "$SRC_DIR/packages/Webkul"
 cp -r "$ROOT_DIR/packages/$PKG_NAME" "$SRC_DIR/packages/$PKG_NAME"
 
+echo "- Forzando vista (View Override)"
+# Creamos la carpeta de override para el paquete admin
+mkdir -p "$SRC_DIR/resources/views/vendor/admin/leads"
+# Reemplazamos la vista original con la nuestra
+cp "$SRC_DIR/packages/Webkul/EnacomLeadOrg/src/Resources/views/admin/leads/index.blade.php" "$SRC_DIR/resources/views/vendor/admin/leads/index.blade.php"
+
 echo "- Reordenando ServiceProvider en config/app.php"
 php "$SRC_DIR/scripts/add_provider.php" "$SRC_DIR" || true
 
