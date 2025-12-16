@@ -3,8 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\EnacomLeadOrg\Http\Controllers\Admin\LeadOrgController;
 
-Route::group(['middleware' => ['web', 'admin']], function () {
-    Route::get('admin/leads', [LeadOrgController::class, 'index'])->name('admin.leads.index');
+Route::group(['middleware' => ['web']], function () {
     Route::get('admin/enacom-test', function () {
         return 'ENACOM PACKAGE IS ACTIVE';
     });
