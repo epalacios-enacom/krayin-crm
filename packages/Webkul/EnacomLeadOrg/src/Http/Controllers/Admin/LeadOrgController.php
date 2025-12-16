@@ -63,8 +63,9 @@ class LeadOrgController
         }
 
         // Return standard view to avoid layout issues. 
-        // Our custom DataGrid is injected via the route override for 'admin.leads.get'.
-        return view('admin::leads.index', compact('pipeline'));
+        // We pass empty columns to satisfy the Kanban view requirement, 
+        // even though this controller is primarily for the custom Grid.
+        return view('admin::leads.index', compact('pipeline') + ['columns' => []]);
     }
 
     public function grid(Request $request)
