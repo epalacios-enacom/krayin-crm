@@ -143,6 +143,7 @@ class LeadOrgDataGrid extends DataGrid
             'label'      => trans('admin::app.datagrid.tag'),
             'type'       => 'string',
             'sortable'   => false,
+            'filterable' => true,
             'visibility' => false,
         ]);
 

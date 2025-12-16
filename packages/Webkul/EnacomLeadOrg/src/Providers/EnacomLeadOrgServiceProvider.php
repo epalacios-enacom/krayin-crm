@@ -20,6 +20,11 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
             if ($index) {
                 $index->uses(LeadOrgController::class . '@index');
             }
+
+            $get = $routes->getByName('admin.leads.get');
+            if ($get) {
+                $get->uses(LeadOrgController::class . '@grid');
+            }
         });
     }
 
