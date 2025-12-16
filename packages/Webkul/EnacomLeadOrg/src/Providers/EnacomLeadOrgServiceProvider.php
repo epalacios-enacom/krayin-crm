@@ -14,12 +14,6 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
 
         $this->app->booted(function () {
             $this->loadRoutesFrom(__DIR__.'/../Routes/admin.php');
-
-            $routes = Route::getRoutes();
-            $get = $routes->getByName('admin.leads.get');
-            if ($get) {
-                $get->uses(LeadOrgController::class . '@grid');
-            }
         });
     }
 

@@ -5,8 +5,6 @@ use Webkul\EnacomLeadOrg\Http\Controllers\Admin\LeadOrgController;
 
 Route::group(['middleware' => ['web']], function () {
     Route::get('admin/enacom-test', function() { return 'ENACOM PACKAGE IS ACTIVE'; });
-    // No overriding of admin.leads.index; core view should render
-    Route::get('admin/leads/get/{pipeline_id?}', [LeadOrgController::class, 'grid'])->name('admin.leads.get');
     Route::get('admin/leads/grid', [LeadOrgController::class, 'grid'])->name('admin.leads.grid');
     Route::get('admin/leads/export', [LeadOrgController::class, 'export'])->name('admin.leads.export');
     Route::get('admin/organizations/search', [\Webkul\EnacomLeadOrg\Http\Controllers\Admin\OrganizationLookupController::class, 'search'])->name('admin.organizations.search');

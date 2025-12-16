@@ -176,7 +176,19 @@ class LeadOrgDataGrid extends DataGrid
      */
     public function prepareActions()
     {
-        return;
+        $this->addAction([
+            'title'  => trans('ui::app.datagrid.actions.view'),
+            'method' => 'GET',
+            'url'    => fn ($row) => route('admin.leads.view', $row->id),
+            'icon'   => 'eye-icon',
+        ]);
+
+        $this->addAction([
+            'title'  => trans('ui::app.datagrid.actions.delete'),
+            'method' => 'DELETE',
+            'url'    => fn ($row) => route('admin.leads.delete', $row->id),
+            'icon'   => 'trash-icon',
+        ]);
     }
 
     /**
