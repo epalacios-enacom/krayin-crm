@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\EnacomLeadOrg\Http\Controllers\Admin\LeadOrgController;
 
-Route::group(['middleware' => ['web']], function () {
+Route::group(['middleware' => ['web', 'admin']], function () {
+    Route::get('admin/leads', [LeadOrgController::class, 'index'])->name('admin.leads.index');
     Route::get('admin/enacom-test', function () {
-        return 'ENACOM PACKAGE IS ACTIVE'; });
+        return 'ENACOM PACKAGE IS ACTIVE';
+    });
 
     // Custom grid route to avoid conflict with core admin.leads.get
     Route::get('admin/leads/enacom-grid/{pipeline_id?}', [LeadOrgController::class, 'grid'])->name('admin.leads.enacom_grid');
