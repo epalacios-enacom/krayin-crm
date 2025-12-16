@@ -14,6 +14,7 @@ class LeadOrgDataGrid extends BaseLeadDataGrid
      */
     public function prepareQueryBuilder()
     {
+        \Illuminate\Support\Facades\Log::info('LeadOrgDataGrid: prepareQueryBuilder called successfully');
         $queryBuilder = parent::prepareQueryBuilder();
 
         $queryBuilder->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
@@ -32,6 +33,7 @@ class LeadOrgDataGrid extends BaseLeadDataGrid
      */
     public function prepareColumns()
     {
+        \Illuminate\Support\Facades\Log::info('LeadOrgDataGrid: prepareColumns called successfully');
         parent::prepareColumns();
 
         $this->addColumn([
