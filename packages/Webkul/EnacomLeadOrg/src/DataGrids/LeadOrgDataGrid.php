@@ -30,9 +30,9 @@ class LeadOrgDataGrid extends BaseLeadDataGrid
      *
      * @return void
      */
-    public function addColumns()
+    public function prepareColumns()
     {
-        parent::addColumns();
+        parent::prepareColumns();
 
         $this->addColumn([
             'index' => 'organization_name',
