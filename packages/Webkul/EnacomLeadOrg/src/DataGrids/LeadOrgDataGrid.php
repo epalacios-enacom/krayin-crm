@@ -23,12 +23,15 @@ class LeadOrgDataGrid extends DataGrid
                 'leads.status',
                 'leads.created_at',
                 'leads.expected_close_date',
+                'leads.closed_at',
                 'users.name as sales_person',
                 'persons.name as contact_person',
                 'organizations.name as organization_name',
                 'lead_sources.name as source',
                 'lead_types.name as type',
-                'lead_pipeline_stages.name as stage'
+                'lead_pipeline_stages.name as stage',
+                DB::raw('0 as is_rotten'),
+                DB::raw('"" as tag_name')
             )
             ->leftJoin('users', 'leads.user_id', '=', 'users.id')
             ->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
@@ -42,6 +45,7 @@ class LeadOrgDataGrid extends DataGrid
         $this->addFilter('contact_person', 'persons.name');
         $this->addFilter('organization_name', 'organizations.name');
         $this->addFilter('title', 'leads.title');
+        $this->addFilter('closed_at', 'leads.closed_at');
 
         $this->setQueryBuilder($queryBuilder);
         return $queryBuilder;
@@ -127,10 +131,34 @@ class LeadOrgDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
+            'index'      => 'is_rotten',
+            'label'      => trans('admin::app.datagrid.is_rotten'),
+            'type'       => 'boolean',
+            'sortable'   => false,
+            'visibility' => false,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'tag_name',
+            'label'      => trans('admin::app.datagrid.tag'),
+            'type'       => 'string',
+            'sortable'   => false,
+            'visibility' => false,
+        ]);
+
+        $this->addColumn([
             'index'      => 'expected_close_date',
             'label'      => trans('admin::app.datagrid.expected_close_date'),
             'type'       => 'date',
             'sortable'   => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'closed_at',
+            'label'      => trans('admin::app.datagrid.closed_at'),
+            'type'       => 'date',
+            'sortable'   => true,
+            'visibility' => false,
         ]);
 
         $this->addColumn([
