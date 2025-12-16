@@ -24,6 +24,15 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
                 $action['controller'] = LeadOrgController::class . '@index';
                 $index->setAction($action);
             }
+
+            // Override the AJAX route that provides the JSON data
+            $get = $routes->getByName('admin.leads.get');
+            if ($get) {
+                $action = $get->getAction();
+                $action['uses'] = LeadOrgController::class . '@grid';
+                $action['controller'] = LeadOrgController::class . '@grid';
+                $get->setAction($action);
+            }
         });
     }
 
