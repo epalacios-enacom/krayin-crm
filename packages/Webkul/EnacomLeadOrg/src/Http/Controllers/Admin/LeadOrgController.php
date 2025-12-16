@@ -50,10 +50,9 @@ class LeadOrgController
             ]);
         }
 
-        return view('enacomleadorg::admin.leads.index', [
-            'organizations' => $organizations,
-            'selectedOrganizationIds' => (array) $request->input('organization_ids', []),
-        ]);
+        // Return standard view to avoid layout issues. 
+        // Our custom DataGrid is injected via the route override for 'admin.leads.get'.
+        return view('admin::leads.index');
     }
 
     public function grid(Request $request)
@@ -86,7 +85,7 @@ class LeadOrgController
 
         $org = $request->input('organization_name');
         if ($org) {
-            $query->where('organizations.name', 'like', '%'.$org.'%');
+            $query->where('organizations.name', 'like', '%' . $org . '%');
         }
         $rows = $query->get();
         $headers = [
