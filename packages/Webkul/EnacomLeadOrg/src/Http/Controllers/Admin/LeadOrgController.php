@@ -50,9 +50,21 @@ class LeadOrgController
             ]);
         }
 
+        // Fetch current pipeline (required by admin::leads.index view)
+        $pipelineId = $request->input('pipeline_id');
+        $pipeline = null;
+
+        if ($pipelineId) {
+            $pipeline = DB::table('lead_pipelines')->where('id', $pipelineId)->first();
+        }
+
+        if (!$pipeline) {
+            $pipeline = DB::table('lead_pipelines')->where('is_default', 1)->first();
+        }
+
         // Return standard view to avoid layout issues. 
         // Our custom DataGrid is injected via the route override for 'admin.leads.get'.
-        return view('admin::leads.index');
+        return view('admin::leads.index', compact('pipeline'));
     }
 
     public function grid(Request $request)
