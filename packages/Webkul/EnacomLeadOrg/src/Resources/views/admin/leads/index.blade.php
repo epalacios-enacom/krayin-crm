@@ -1,16 +1,16 @@
-@extends('admin::layouts.master')
+<!DOCTYPE html>
+<html>
 
-@section('page_title')
-  Leads (DEBUG)
-@endsection
+<head>
+  <title>Test Page</title>
+</head>
 
-@section('content-wrapper')
-  <div class="content">
-    <h1>DEBUG MODE ENABLED</h1>
-    <p>Si ves esto, el parche funcionó, pero hay un error cargando el Grid.</p>
-
-    {{--
-    <form ... (commented out form) --}} {{-- We comment out the table component to isolate the error --}} {{--
-      <table-component ...></table-component> --}}
+<body>
+  <div style="padding: 50px; background: #ffebee; color: #b71c1c; font-family: sans-serif;">
+    <h1>CRITICAL TEST: RAW HTML</h1>
+    <p>If you see this, the file override was successful.</p>
+    <p>Timestamp: {{ date('Y-m-d H:i:s') }}</p>
   </div>
-@endsection
+</body>
+
+</html>
