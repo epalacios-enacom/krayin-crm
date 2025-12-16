@@ -19,13 +19,14 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
 
             $index = $routes->getByName('admin.leads.index');
             if ($index) {
-                $index->uses(LeadOrgController::class . '@index');
+                // Aggressively set the action
+                $action = $index->getAction();
+                $action['uses'] = LeadOrgController::class . '@index';
+                $action['controller'] = LeadOrgController::class . '@index';
+                $index->setAction($action);
             }
 
-            $get = $routes->getByName('admin.leads.get');
-            if ($get) {
-                $get->uses(LeadOrgController::class . '@grid');
-            }
+            // Removed hijacking of admin.leads.get as we now use admin.leads.enacom_grid directly in the View.
         });
     }
 
