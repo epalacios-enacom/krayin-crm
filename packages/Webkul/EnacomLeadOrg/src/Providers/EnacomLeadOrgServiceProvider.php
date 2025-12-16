@@ -29,5 +29,9 @@ class EnacomLeadOrgServiceProvider extends ServiceProvider
 
     public function register()
     {
+        $this->app->bind(
+            \Webkul\Admin\DataGrids\LeadDataGrid::class,
+            \Webkul\EnacomLeadOrg\DataGrids\LeadOrgDataGrid::class
+        );
     }
 }

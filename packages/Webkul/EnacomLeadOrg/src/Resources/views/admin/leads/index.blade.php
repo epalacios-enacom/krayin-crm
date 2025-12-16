@@ -25,8 +25,8 @@
 
         @php 
             $qs = http_build_query(['organization_ids' => request('organization_ids')]); 
-            // Apuntamos a nuestra ruta personalizada que sirve el LeadOrgDataGrid con la columna Empresa
-            $srcUrl = route('admin.leads.enacom_grid');
+            // Usamos la ruta estándar admin.leads.get, ya que el ServiceProvider inyecta nuestro Grid personalizado
+            $srcUrl = route('admin.leads.get');
             if ($qs) {
                 $srcUrl .= (strpos($srcUrl, '?') === false ? '?' : '&') . $qs;
             }
