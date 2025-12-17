@@ -78,8 +78,17 @@ class LeadOrgController
 
     public function grid(Request $request)
     {
-        $grid = new LeadOrgDataGrid;
-        return $grid->toJson();
+        try {
+            \Illuminate\Support\Facades\Log::info('LeadOrgController: grid action hit for JSON request.');
+            $grid = new LeadOrgDataGrid;
+            $json = $grid->toJson();
+            \Illuminate\Support\Facades\Log::info('LeadOrgController: grid JSON generated. Length: ' . strlen($json->content()));
+            return $json;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('LeadOrgController: Error generating grid JSON: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error($e->getTraceAsString());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function export(Request $request)
