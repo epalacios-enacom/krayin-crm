@@ -20,6 +20,18 @@ if [ ! -d "$SRC_DIR" ]; then
   exit 1
 fi
 
+
+# Modo DEV: Si se pasa "dev" como segundo argumento, sube cambios primero
+MODE=${2:-deploy}
+
+if [ "$MODE" == "dev" ]; then
+    echo "== MODO DEV: Subiendo cambios al repo =="
+    cd "$ROOT_DIR"
+    git add .
+    git commit -m "wip: auto sync from script" || true
+    git push origin HEAD
+fi
+
 echo "- Actualizando repo raíz"
 cd "$ROOT_DIR"
 git pull || true
@@ -32,8 +44,11 @@ cp -r "$ROOT_DIR/packages/$PKG_NAME" "$SRC_DIR/packages/$PKG_NAME"
 echo "- Reordenando ServiceProvider en config/app.php"
 php "$SRC_DIR/scripts/add_provider.php" "$SRC_DIR" || true
 
-echo "- Reconstruyendo autoload y limpiando cachés"
+echo "- Limpiando cachés y optimizando"
 cd "$SRC_DIR"
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
 composer dump-autoload
 php artisan optimize:clear
 
