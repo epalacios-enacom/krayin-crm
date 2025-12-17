@@ -62,6 +62,14 @@ class LeadOrgController
             $pipeline = DB::table('lead_pipelines')->where('is_default', 1)->first();
         }
 
+        // Manually hydrate stages for the view to prevent "Undefined property: stdClass::$stages"
+        if ($pipeline) {
+            $pipeline->stages = DB::table('lead_stages')
+                ->where('lead_pipeline_id', $pipeline->id)
+                ->orderBy('sort_order', 'asc')
+                ->get();
+        }
+
         // Return standard view to avoid layout issues. 
         // We pass empty columns to satisfy the Kanban view requirement, 
         // even though this controller is primarily for the custom Grid.
