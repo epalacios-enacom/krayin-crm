@@ -73,6 +73,10 @@ class LeadOrgController
         // Return standard view to avoid layout issues. 
         // We pass empty columns to satisfy the Kanban view requirement, 
         // even though this controller is primarily for the custom Grid.
+        if ($request->ajax()) {
+            return app(LeadOrgDataGrid::class)->toJson();
+        }
+
         return view('admin::leads.index', compact('pipeline') + ['columns' => []]);
     }
 
