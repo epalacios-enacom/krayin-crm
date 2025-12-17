@@ -2,10 +2,10 @@
 
 namespace Webkul\EnacomLeadOrg\DataGrids;
 
+use Webkul\DataGrid\DataGrid;
 use Illuminate\Support\Facades\DB;
-use Webkul\Admin\DataGrids\LeadDataGrid as BaseLeadDataGrid;
 
-class LeadOrgDataGrid extends BaseLeadDataGrid
+class LeadOrgDataGrid extends DataGrid
 {
     /**
      * Prepare query builder.
@@ -54,15 +54,74 @@ class LeadOrgDataGrid extends BaseLeadDataGrid
      */
     public function prepareColumns()
     {
-        parent::prepareColumns();
+        $this->addColumn([
+            'index' => 'id',
+            'label' => trans('admin::app.datagrid.id'),
+            'type' => 'integer',
+            'searchable' => false,
+            'sortable' => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index' => 'title',
+            'label' => trans('admin::app.datagrid.title'),
+            'type' => 'string',
+            'searchable' => true,
+            'sortable' => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index' => 'person_name',
+            'label' => trans('admin::app.datagrid.name'),
+            'type' => 'string',
+            'searchable' => true,
+            'sortable' => true,
+            'filterable' => true,
+        ]);
 
         $this->addColumn([
             'index' => 'organization_name',
             'label' => 'Empresa',
             'type' => 'string',
-            'sortable' => true,
             'searchable' => true,
+            'sortable' => true,
             'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index' => 'stage_name',
+            'label' => trans('admin::app.datagrid.stage'),
+            'type' => 'string',
+            'searchable' => true,
+            'sortable' => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index' => 'created_at',
+            'label' => trans('admin::app.datagrid.created_at'),
+            'type' => 'datetime',
+            'sortable' => true,
+            'filterable' => true,
+        ]);
+    }
+
+    public function prepareActions()
+    {
+        $this->addAction([
+            'title' => trans('admin::app.datagrid.view'),
+            'method' => 'GET',
+            'route' => 'admin.leads.view',
+            'icon' => 'icon-eye',
+        ]);
+
+        $this->addAction([
+            'title' => trans('admin::app.datagrid.delete'),
+            'method' => 'DELETE',
+            'route' => 'admin.leads.delete',
+            'icon' => 'icon-delete',
         ]);
     }
 }
