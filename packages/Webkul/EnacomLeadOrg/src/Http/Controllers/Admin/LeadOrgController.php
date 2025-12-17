@@ -23,20 +23,20 @@ class LeadOrgController
             $query = DB::table('leads')
                 ->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
                 ->leftJoin('organizations', 'persons.organization_id', '=', 'organizations.id')
-                ->leftJoin('lead_stages', 'leads.lead_stage_id', '=', 'lead_stages.id')
+                ->leftJoin('lead_pipeline_stages', 'leads.lead_pipeline_stage_id', '=', 'lead_pipeline_stages.id')
                 ->select(
                     'leads.id',
                     'leads.title',
-                    'leads.lead_stage_id',
+                    'leads.lead_pipeline_stage_id',
                     DB::raw('COALESCE(organizations.name, "") as organization_name'),
-                    DB::raw('COALESCE(lead_stages.name, "Sin etapa") as stage_name')
+                    DB::raw('COALESCE(lead_pipeline_stages.name, "Sin etapa") as stage_name')
                 );
 
             if (count($orgIds)) {
                 $query->whereIn('persons.organization_id', $orgIds);
             }
 
-            $leads = $query->orderBy('lead_stages.id')->get();
+            $leads = $query->orderBy('lead_pipeline_stages.sort_order')->get();
 
             $columns = [];
             foreach ($leads as $lead) {
@@ -64,7 +64,7 @@ class LeadOrgController
 
         // Manually hydrate stages for the view to prevent "Undefined property: stdClass::$stages"
         if ($pipeline) {
-            $pipeline->stages = DB::table('lead_stages')
+            $pipeline->stages = DB::table('lead_pipeline_stages')
                 ->where('lead_pipeline_id', $pipeline->id)
                 ->orderBy('sort_order', 'asc')
                 ->get();
