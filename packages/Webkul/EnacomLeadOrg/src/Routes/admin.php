@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\EnacomLeadOrg\Http\Controllers\Admin\LeadOrgController;
 
-Route::group(['middleware' => ['web']], function () {
+Route::group(['middleware' => ['web', 'user']], function () {
     Route::get('admin/enacom-test', function () {
         return 'ENACOM PACKAGE IS ACTIVE';
     });
