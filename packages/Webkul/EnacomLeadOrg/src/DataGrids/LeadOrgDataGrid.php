@@ -115,6 +115,9 @@ class LeadOrgDataGrid extends DataGrid
             'method' => 'GET',
             'route' => 'admin.leads.view',
             'icon' => 'icon-eye',
+            'url' => function ($row) {
+                return route('admin.leads.view', $row->id);
+            },
         ]);
 
         $this->addAction([
@@ -122,6 +125,9 @@ class LeadOrgDataGrid extends DataGrid
             'method' => 'DELETE',
             'route' => 'admin.leads.delete',
             'icon' => 'icon-delete',
+            'url' => function ($row) {
+                return route('admin.leads.delete', $row->id);
+            },
         ]);
     }
 }
